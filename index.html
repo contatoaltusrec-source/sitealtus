@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Altus Rec — Selo Musical</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+
+    <!-- Open Graph (WhatsApp, Discord, etc) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Altus Rec">
+    <meta property="og:description" content="Selo Musical">
+    <meta property="og:image" content="logo.png">
+    <meta property="og:image:width" content="512">
+    <meta property="og:image:height" content="512">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Altus Rec">
+    <meta name="twitter:description" content="Selo Musical">
+    <meta name="twitter:image" content="logo.png">
+
+    <!-- Theme -->
+    <meta name="theme-color" content="#000000">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* ── Background blurred logos ── */
+        .bg-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            opacity: 0;
+            animation: bgFadeIn 2.5s ease-out 0.3s both;
+        }
+
+        .bg-logo {
+            position: absolute;
+            will-change: transform, opacity;
+        }
+
+        .bg-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .bg-logo-1 {
+            width: 900px;
+            height: 900px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.22;
+            filter: blur(50px) saturate(2) brightness(1.2);
+            animation: pulse1 8s ease-in-out infinite, drift1 12s ease-in-out infinite;
+        }
+
+        .bg-logo-2 {
+            width: 700px;
+            height: 700px;
+            top: 5%;
+            left: 10%;
+            transform: translate(-50%, -50%);
+            opacity: 0.12;
+            filter: blur(60px) saturate(1.5) hue-rotate(15deg) brightness(1.1);
+            animation: pulse2 10s ease-in-out infinite, drift2 15s ease-in-out infinite;
+        }
+
+        .bg-logo-3 {
+            width: 750px;
+            height: 750px;
+            bottom: 0;
+            right: 5%;
+            opacity: 0.10;
+            filter: blur(65px) saturate(1.5) hue-rotate(-10deg) brightness(1.1);
+            animation: pulse3 9s ease-in-out infinite, drift3 14s ease-in-out infinite;
+        }
+
+        .bg-logo-4 {
+            width: 600px;
+            height: 600px;
+            top: 55%;
+            left: -5%;
+            opacity: 0.09;
+            filter: blur(70px) saturate(1.3) hue-rotate(30deg);
+            animation: pulse2 11s ease-in-out infinite reverse, drift1 16s ease-in-out infinite reverse;
+        }
+
+        .bg-logo-5 {
+            width: 650px;
+            height: 650px;
+            top: 10%;
+            right: -5%;
+            opacity: 0.09;
+            filter: blur(65px) saturate(1.4) hue-rotate(-25deg);
+            animation: pulse1 12s ease-in-out infinite, drift3 13s ease-in-out infinite reverse;
+        }
+
+        /* ── Glass / grain texture overlay ── */
+        .grain-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.5;
+            mix-blend-mode: screen;
+        }
+
+        /* ── Frosted glass overlay ── */
+        .glass-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            backdrop-filter: blur(1px) saturate(1.1);
+            -webkit-backdrop-filter: blur(1px) saturate(1.1);
+            background: radial-gradient(
+                ellipse at center,
+                transparent 30%,
+                rgba(0, 0, 0, 0.4) 100%
+            );
+        }
+
+        /* ── Foreground content (logo + text together) ── */
+        .content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 36px;
+            opacity: 0;
+            animation: contentEntrance 2.2s cubic-bezier(0.16, 1, 0.3, 1) 2s both;
+        }
+
+        .main-logo {
+            width: 300px;
+            height: 300px;
+            filter: drop-shadow(0 0 40px rgba(255, 255, 255, 0.25))
+                    drop-shadow(0 0 80px rgba(255, 255, 255, 0.1))
+                    drop-shadow(0 0 120px rgba(255, 255, 255, 0.05));
+            animation: glow 4s ease-in-out infinite;
+        }
+
+        .main-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .tagline {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+            font-weight: 400;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+        }
+
+        /* ── Rodapé com ícones ── */
+        .footer {
+            position: fixed;
+            bottom: 28px;
+            left: 0;
+            right: 0;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            opacity: 0;
+            animation: contentEntrance 2.2s cubic-bezier(0.16, 1, 0.3, 1) 2.6s both;
+        }
+
+        .footer-icons {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .footer-copy {
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 10px;
+            font-weight: 300;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .footer-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.35);
+            transition: color 0.3s ease, transform 0.3s ease;
+            text-decoration: none;
+        }
+
+        .footer-link:hover {
+            color: rgba(255, 255, 255, 0.75);
+            transform: scale(1.1);
+        }
+
+        .footer-link svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* ── Entrance animations ── */
+        @keyframes bgFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes contentEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── Glow ── */
+        @keyframes glow {
+            0%, 100% {
+                filter: drop-shadow(0 0 40px rgba(255, 255, 255, 0.25))
+                        drop-shadow(0 0 80px rgba(255, 255, 255, 0.1))
+                        drop-shadow(0 0 120px rgba(255, 255, 255, 0.05));
+            }
+            50% {
+                filter: drop-shadow(0 0 50px rgba(255, 255, 255, 0.35))
+                        drop-shadow(0 0 100px rgba(255, 255, 255, 0.15))
+                        drop-shadow(0 0 150px rgba(255, 255, 255, 0.08));
+            }
+        }
+
+        /* ── Background pulse & drift ── */
+        @keyframes pulse1 {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.22; }
+            50% { transform: translate(-50%, -50%) scale(1.12); opacity: 0.28; }
+        }
+
+        @keyframes pulse2 {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.12; }
+            50% { transform: translate(-50%, -50%) scale(1.18); opacity: 0.17; }
+        }
+
+        @keyframes pulse3 {
+            0%, 100% { transform: scale(1); opacity: 0.10; }
+            50% { transform: scale(1.15); opacity: 0.15; }
+        }
+
+        @keyframes drift1 {
+            0%, 100% { margin-left: 0; margin-top: 0; }
+            25% { margin-left: 40px; margin-top: -25px; }
+            50% { margin-left: -25px; margin-top: 35px; }
+            75% { margin-left: 30px; margin-top: 20px; }
+        }
+
+        @keyframes drift2 {
+            0%, 100% { margin-left: 0; margin-top: 0; }
+            33% { margin-left: -35px; margin-top: 40px; }
+            66% { margin-left: 45px; margin-top: -20px; }
+        }
+
+        @keyframes drift3 {
+            0%, 100% { margin-left: 0; margin-top: 0; }
+            25% { margin-left: -40px; margin-top: -30px; }
+            50% { margin-left: 25px; margin-top: -35px; }
+            75% { margin-left: -20px; margin-top: 25px; }
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .main-logo {
+                width: 200px;
+                height: 200px;
+            }
+
+            .tagline {
+                font-size: 11px;
+                letter-spacing: 0.3em;
+            }
+
+            .footer {
+                bottom: 24px;
+            }
+
+            .bg-logo-1 { width: 500px; height: 500px; }
+            .bg-logo-2 { width: 400px; height: 400px; }
+            .bg-logo-3 { width: 420px; height: 420px; }
+            .bg-logo-4 { width: 350px; height: 350px; }
+            .bg-logo-5 { width: 380px; height: 380px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background blurred logos -->
+    <div class="bg-layer">
+        <div class="bg-logo bg-logo-1"><img src="logo.png" alt=""></div>
+        <div class="bg-logo bg-logo-2"><img src="logo.png" alt=""></div>
+        <div class="bg-logo bg-logo-3"><img src="logo.png" alt=""></div>
+        <div class="bg-logo bg-logo-4"><img src="logo.png" alt=""></div>
+        <div class="bg-logo bg-logo-5"><img src="logo.png" alt=""></div>
+    </div>
+
+    <!-- Frosted glass overlay -->
+    <div class="glass-overlay"></div>
+
+    <!-- Grain texture (canvas) -->
+    <canvas class="grain-canvas" id="grainCanvas"></canvas>
+
+    <!-- Main content: logo + text appear together -->
+    <div class="content">
+        <div class="main-logo">
+            <img src="logo.png" alt="Altus Rec">
+        </div>
+        <p class="tagline">Nos vemos em 2027</p>
+    </div>
+
+    <!-- Rodapé -->
+    <div class="footer">
+        <div class="footer-icons">
+            <!-- Instagram -->
+            <a href="https://www.instagram.com/altusrec/" target="_blank" rel="noopener noreferrer" class="footer-link" title="Instagram">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                    <circle cx="12" cy="12" r="5"/>
+                    <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/>
+                </svg>
+            </a>
+            <!-- Spotify -->
+            <a href="https://open.spotify.com/user/31iwbmwr6jsnr6hatmlmroumf444" target="_blank" rel="noopener noreferrer" class="footer-link" title="Spotify">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                </svg>
+            </a>
+            <!-- Email -->
+            <a href="mailto:contato@altusrec.com.br" class="footer-link" title="Email">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2"/>
+                    <path d="M22 4L12 13 2 4"/>
+                </svg>
+            </a>
+        </div>
+        <p class="footer-copy">&copy; 2026 Altus Rec. Todos os direitos reservados.</p>
+    </div>
+
+    <script>
+        // Animated grain texture via canvas
+        const canvas = document.getElementById('grainCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        function renderGrain() {
+            const w = canvas.width;
+            const h = canvas.height;
+            const imageData = ctx.createImageData(w, h);
+            const data = imageData.data;
+
+            for (let i = 0; i < data.length; i += 4) {
+                const v = Math.random() * 35;
+                data[i] = v;
+                data[i + 1] = v;
+                data[i + 2] = v;
+                data[i + 3] = 60;
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+            requestAnimationFrame(renderGrain);
+        }
+
+        renderGrain();
+    </script>
+</body>
+</html>
