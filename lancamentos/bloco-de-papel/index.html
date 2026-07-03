@@ -9,11 +9,26 @@
     <meta name="description" content="Bloco de Papel, lançamento da Altus Records.">
     <link rel="canonical" href="https://altusrec.com.br/lancamentos/bloco-de-papel">
 
-    <!-- Favicon -->
+    <!-- Favicon (dinâmico: logo branco no modo escuro, preto no modo claro) -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <script>
+      (function () {
+        var mq = window.matchMedia('(prefers-color-scheme: dark)');
+        function applyFavicon() {
+          // modo escuro → logo branco; modo claro → logo preto
+          var suffix = mq.matches ? '' : '-black';
+          document.querySelectorAll('link[rel="icon"][type="image/png"]').forEach(function (link) {
+            var size = (link.getAttribute('sizes') || '').indexOf('16') === 0 ? 16 : 32;
+            link.setAttribute('href', '/favicon-' + size + suffix + '.png');
+          });
+        }
+        applyFavicon();
+        if (mq.addEventListener) mq.addEventListener('change', applyFavicon);
+      })();
+    </script>
 
     <!-- Open Graph (WhatsApp, Discord, etc) -->
     <meta property="og:type" content="website">
@@ -37,8 +52,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="/assets/index-COm-5dgk.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-s7Wbtsvb.css">
+    <script type="module" crossorigin src="/assets/index-PiKA8RYq.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-C5LUGwwm.css">
   </head>
   <body>
     <div id="root"></div>
