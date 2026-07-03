@@ -9,26 +9,12 @@
     <meta name="description" content="6LOVE0, lançamento da Altus Records.">
     <link rel="canonical" href="https://altusrec.com.br/lancamentos/6love0">
 
-    <!-- Favicon (dinâmico: logo branco no modo escuro, preto no modo claro) -->
+    <!-- Favicon (logo branco em fundo preto: visível em qualquer tema e no Google) -->
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <script>
-      (function () {
-        var mq = window.matchMedia('(prefers-color-scheme: dark)');
-        function applyFavicon() {
-          // modo escuro → logo branco; modo claro → logo preto
-          var suffix = mq.matches ? '' : '-black';
-          document.querySelectorAll('link[rel="icon"][type="image/png"]').forEach(function (link) {
-            var size = (link.getAttribute('sizes') || '').indexOf('16') === 0 ? 16 : 32;
-            link.setAttribute('href', '/favicon-' + size + suffix + '.png');
-          });
-        }
-        applyFavicon();
-        if (mq.addEventListener) mq.addEventListener('change', applyFavicon);
-      })();
-    </script>
 
     <!-- Open Graph (WhatsApp, Discord, etc) -->
     <meta property="og:type" content="website">
